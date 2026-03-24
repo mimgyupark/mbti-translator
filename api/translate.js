@@ -6,8 +6,8 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { message, mbtiType, mode } = req.body;
-  if (!message || !mbtiType) return res.status(400).json({ error: 'Missing params' });
+  const { message, mbtiType, mode, images } = req.body;
+  if (!mbtiType) return res.status(400).json({ error: 'Missing params' });
 
   const API_KEY = process.env.GPT_API_KEY;
   if (!API_KEY) return res.status(500).json({ error: 'API key not configured' });
@@ -59,6 +59,77 @@ export default async function handler(req, res) {
 - 너무 짧지 않게, ${mbtiType}의 특성이 확 드러나게
 - JSON으로만 응답: {"translated": "변환된 메시지"}`;
     userPrompt = `이 메시지를 ${mbtiType} 말투로 변환해줘:\n\n"${message}"`;
+  } else if (mode === 'confess') {
+    // 고백 성공률 분석
+    systemPrompt = `너는 연애 심리 분석 전문가이자 MBTI 전문가야. 카카오톡 대화 내용을 분석해서 상대방에게 고백했을 때의 성공 확률과 예상 반응을 분석해줘.
+
+상대방 MBTI: ${mbtiType}
+상대방 특징: ${mbtiTraits[mbtiType]}
+
+대화 내용을 분석해서 다음을 파악해:
+1. 상대방의 호감도 신호 (답장 속도감, 이모티콘 사용, 대화 주도, 질문 빈도 등)
+2. ${mbtiType} 유형의 연애 스타일과 호감 표현 방식
+3. 현재 관계 단계 (모르는 사이/지인/친구/썸)
+
+반드시 아래 JSON 형식으로만 응답해:
+{
+  "score": 성공확률(0-100 숫자만),
+  "analysis": "관계 분석 (3-4문장. 대화에서 발견된 호감/비호감 신호를 구체적으로 언급)",
+  "best_response": "${mbtiType}이 고백을 수락할 때 할 법한 대답 (실제 카톡 말투로)",
+  "best_reason": "수락 시나리오의 근거 (1문장)",
+  "neutral_response": "${mbtiType}이 고백에 보류/애매하게 반응할 때 할 법한 대답",
+  "neutral_reason": "보류 시나리오의 근거 (1문장)",
+  "worst_response": "${mbtiType}이 고백을 거절할 때 할 법한 대답",
+  "worst_reason": "거절 시나리오의 근거 (1문장)",
+  "strategy": "이 ${mbtiType}에게 고백할 때 최적의 전략 (구체적 문구 예시 포함, 3-4문장)"
+}`;
+    userPrompt = `아래는 나와 ${mbtiType}인 상대방의 카카오톡 대화야. 고백 성공률을 분석해줘:\n\n${message}`;
+
+    // Handle images with GPT-4o vision
+    if (images && images.length > 0) {
+      const imageContents = images.map(img => ({
+        type: 'image_url',
+        image_url: { url: img, detail: 'low' }
+      }));
+
+      try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: [
+                { type: 'text', text: userPrompt },
+                ...imageContents
+              ]},
+            ],
+            temperature: 0.8,
+            max_tokens: 1000,
+          }),
+        });
+
+        if (!response.ok) {
+          const err = await response.text();
+          return res.status(response.status).json({ error: `OpenAI error: ${err}` });
+        }
+
+        const data = await response.json();
+        const content = data.choices[0].message.content.trim();
+        let parsed;
+        try {
+          const jsonStr = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          parsed = JSON.parse(jsonStr);
+        } catch { parsed = { raw: content }; }
+        return res.status(200).json({ result: parsed, mode });
+      } catch (err) {
+        return res.status(500).json({ error: err.message });
+      }
+    }
   } else {
     // compare mode - 16개 전부
     systemPrompt = `너는 MBTI별 말투 변환 전문가야. 주어진 메시지를 16개 MBTI 유형 각각의 카카오톡 말투로 변환해줘.
@@ -82,13 +153,13 @@ ${Object.entries(mbtiTraits).map(([k,v]) => `${k}: ${v}`).join('\n')}
         'Authorization': `Bearer ${API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: mode === 'confess' ? 'gpt-4o' : 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
         ],
-        temperature: 0.9,
-        max_tokens: mode === 'compare' ? 2000 : 500,
+        temperature: mode === 'confess' ? 0.8 : 0.9,
+        max_tokens: mode === 'compare' ? 2000 : mode === 'confess' ? 1000 : 500,
       }),
     });
 

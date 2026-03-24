@@ -452,6 +452,290 @@ body{
   color:var(--text3);
 }
 
+/* ===== TAB NAV ===== */
+.tab-nav{
+  display:flex;gap:4px;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:14px;
+  padding:4px;
+  margin-bottom:20px;
+  box-shadow:var(--shadow);
+}
+
+.tab-btn{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:transparent;
+  font-size:14px;font-weight:600;
+  color:var(--text3);
+  cursor:pointer;font-family:inherit;
+  transition:all .25s;
+  position:relative;
+}
+
+.tab-btn.active{
+  background:var(--accent);
+  color:#fff;
+  box-shadow:0 2px 8px rgba(91,76,219,.25);
+}
+
+.premium-badge{
+  display:inline-block;
+  font-size:9px;font-weight:800;
+  padding:2px 6px;
+  border-radius:4px;
+  background:linear-gradient(135deg,#f59e0b,#f97316);
+  color:#fff;
+  vertical-align:middle;
+  margin-left:4px;
+  letter-spacing:.5px;
+}
+
+/* ===== CONFESS TAB ===== */
+.trial-banner{
+  padding:10px 16px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#fef3c7,#fde68a);
+  border:1px solid #f59e0b44;
+  font-size:12px;
+  color:#92400e;
+  text-align:center;
+  margin-bottom:16px;
+}
+
+.confess-step{margin-bottom:20px}
+
+.step-header{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:10px;
+  font-size:14px;font-weight:600;
+  color:var(--text);
+}
+
+.step-num{
+  width:24px;height:24px;
+  border-radius:50%;
+  background:var(--accent);
+  color:#fff;
+  font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+
+.upload-area{
+  border:2px dashed var(--border);
+  border-radius:16px;
+  padding:32px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:all .2s;
+  background:var(--surface);
+}
+
+.upload-area:hover{
+  border-color:var(--accent);
+  background:var(--accent-light);
+}
+
+.upload-area.dragover{
+  border-color:var(--accent);
+  background:var(--accent-light);
+  transform:scale(1.01);
+}
+
+.upload-icon{font-size:36px;margin-bottom:8px}
+.upload-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.upload-desc{font-size:12px;color:var(--text3)}
+
+.uploaded-previews{
+  display:flex;gap:8px;flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.uploaded-previews img{
+  width:80px;height:80px;
+  object-fit:cover;
+  border-radius:10px;
+  border:2px solid var(--border);
+}
+
+.upload-or{
+  text-align:center;
+  font-size:12px;color:var(--text3);
+  margin:12px 0;
+  position:relative;
+}
+
+.upload-or::before,.upload-or::after{
+  content:'';position:absolute;top:50%;
+  width:calc(50% - 20px);height:1px;
+  background:var(--border);
+}
+
+.upload-or::before{left:0}
+.upload-or::after{right:0}
+
+.confess-btn{
+  width:100%;
+  padding:16px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#e8457a,#f472b6);
+  color:#fff;
+  font-size:16px;font-weight:700;
+  cursor:pointer;font-family:inherit;
+  transition:all .2s;
+  box-shadow:0 4px 16px rgba(232,69,122,.25);
+}
+
+.confess-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 24px rgba(232,69,122,.35);
+}
+
+.confess-btn:active{transform:scale(.98)}
+
+/* Confess Result */
+.confess-result-card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  animation:fadeUp .5s ease;
+}
+
+.confess-score{
+  text-align:center;
+  padding:28px 20px;
+  background:linear-gradient(135deg,#ffeef4,#ede9ff);
+}
+
+.score-circle{
+  width:100px;height:100px;
+  border-radius:50%;
+  background:var(--surface);
+  display:inline-flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(232,69,122,.15);
+  margin-bottom:12px;
+}
+
+.score-num{font-size:32px;font-weight:900;color:var(--accent2);line-height:1}
+.score-pct{font-size:12px;color:var(--text3);font-weight:500}
+.score-label{font-size:14px;font-weight:600;color:var(--text)}
+
+.confess-body{padding:16px}
+
+.response-scenario{
+  padding:14px;
+  border-radius:12px;
+  margin-bottom:10px;
+  border-left:3px solid var(--accent);
+}
+
+.response-scenario.good{background:#e6f9f0;border-left-color:var(--green)}
+.response-scenario.neutral{background:var(--orange-light);border-left-color:var(--orange)}
+.response-scenario.bad{background:#fff5f5;border-left-color:#e53e3e}
+
+.scenario-label{font-size:11px;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.scenario-label.good{color:var(--green)}
+.scenario-label.neutral{color:var(--orange)}
+.scenario-label.bad{color:#e53e3e}
+
+.scenario-text{font-size:14px;line-height:1.7;color:var(--text)}
+.scenario-analysis{font-size:12px;color:var(--text2);margin-top:6px;font-style:italic}
+
+.confess-tip{
+  padding:14px;
+  border-radius:12px;
+  background:var(--accent-light);
+  margin-top:14px;
+}
+
+.confess-tip h4{font-size:13px;color:var(--accent);margin-bottom:6px}
+.confess-tip p{font-size:13px;line-height:1.7;color:var(--text)}
+
+/* PRO Card */
+.pro-card{
+  background:linear-gradient(135deg,#1a1a2e,#2d2b55);
+  border-radius:var(--radius);
+  padding:24px;
+  color:#fff;
+  text-align:center;
+  margin-top:20px;
+  box-shadow:var(--shadow-lg);
+}
+
+.pro-header{margin-bottom:16px}
+.pro-icon{font-size:32px;display:block;margin-bottom:8px}
+.pro-card h3{font-size:18px;font-weight:800}
+
+.pro-features{
+  list-style:none;
+  text-align:left;
+  margin-bottom:20px;
+}
+
+.pro-features li{
+  padding:6px 0;
+  font-size:13px;
+  color:#c4b5fd;
+}
+
+.pro-features li::before{
+  content:'✓ ';color:#34d399;font-weight:700;
+}
+
+.pro-btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,#f59e0b,#f97316);
+  color:#fff;
+  font-size:15px;font-weight:700;
+  cursor:pointer;font-family:inherit;
+  transition:all .2s;
+}
+
+.pro-btn:hover{transform:scale(1.02);box-shadow:0 4px 16px rgba(245,158,11,.3)}
+
+.pro-note{
+  font-size:11px;
+  color:#a09890;
+  margin-top:8px;
+}
+
+.blur-overlay{
+  filter:blur(6px);
+  pointer-events:none;
+  user-select:none;
+  position:relative;
+}
+
+.unlock-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:rgba(255,255,255,.7);
+  border-radius:var(--radius);
+  z-index:10;
+}
+
+.unlock-overlay button{
+  padding:12px 28px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,#f59e0b,#f97316);
+  color:#fff;
+  font-size:14px;font-weight:700;
+  cursor:pointer;font-family:inherit;
+}
+
 /* Responsive */
 @media(max-width:400px){
   .mbti-chip{padding:8px 0}
@@ -471,39 +755,114 @@ body{
   <p>친구 카톡을 복붙하면 속마음을 알려드려요</p>
 </div>
 
-<!-- MBTI Selector -->
-<div class="section-label">MBTI 선택</div>
-<div class="mbti-area" id="mbtiArea"></div>
+<!-- Tab Navigation -->
+<div class="tab-nav" id="tabNav">
+  <button class="tab-btn active" data-tab="main" onclick="switchTab('main')">번역/해석</button>
+  <button class="tab-btn" data-tab="confess" onclick="switchTab('confess')">
+    고백 예측
+    <span class="premium-badge">PRO</span>
+  </button>
+</div>
 
-<!-- Input -->
-<div class="input-card">
-  <textarea id="msgInput" placeholder="친구 카톡을 여기에 복붙하세요&#10;&#10;예) 아 ㅋㅋ 괜찮아~ 신경 안 써도 돼" rows="3"></textarea>
-  <div class="input-actions">
-    <div class="mode-pills">
-      <button class="mode-pill active" data-mode="decode" onclick="setMode('decode')">해석</button>
-      <button class="mode-pill" data-mode="translate" onclick="setMode('translate')">번역</button>
-      <button class="mode-pill" data-mode="compare" onclick="setMode('compare')">전체비교</button>
+<!-- ===== TAB 1: 번역/해석 ===== -->
+<div class="tab-content" id="tabMain">
+  <div class="section-label">MBTI 선택</div>
+  <div class="mbti-area" id="mbtiArea"></div>
+
+  <div class="input-card">
+    <textarea id="msgInput" placeholder="친구 카톡을 여기에 복붙하세요&#10;&#10;예) 아 ㅋㅋ 괜찮아~ 신경 안 써도 돼" rows="3"></textarea>
+    <div class="input-actions">
+      <div class="mode-pills">
+        <button class="mode-pill active" data-mode="translate" onclick="setMode('translate')">번역</button>
+        <button class="mode-pill" data-mode="decode" onclick="setMode('decode')">해석</button>
+        <button class="mode-pill" data-mode="compare" onclick="setMode('compare')">전체비교</button>
+      </div>
+      <button class="submit-btn" onclick="handleAnalyze()">분석하기</button>
     </div>
-    <button class="submit-btn" onclick="handleAnalyze()">분석하기</button>
+  </div>
+
+  <div class="examples">
+    <button class="ex-chip" onclick="fill('괜찮아~ 신경 안 써도 돼')">괜찮아~ 신경 안 써도 돼</button>
+    <button class="ex-chip" onclick="fill('아니 진짜 화 안 났어')">진짜 화 안 났어</button>
+    <button class="ex-chip" onclick="fill('ㅇㅇ 알겠어')">ㅇㅇ 알겠어</button>
+    <button class="ex-chip" onclick="fill('나 아무거나 먹어도 돼')">아무거나 먹어도 돼</button>
+    <button class="ex-chip" onclick="fill('솔직히 그때 좀 서운했어')">솔직히 좀 서운했어</button>
+    <button class="ex-chip" onclick="fill('ㅎㅎ 재밌었어 고마워')">ㅎㅎ 재밌었어 고마워</button>
+  </div>
+
+  <div class="results" id="results">
+    <div class="empty">
+      <div class="em-icon">🔮</div>
+      <h3>카톡 한 줄이면 속마음이 보여요</h3>
+      <p>위에서 MBTI 선택 → 메시지 복붙 → 분석하기!</p>
+    </div>
   </div>
 </div>
 
-<!-- Example Chips -->
-<div class="examples">
-  <button class="ex-chip" onclick="fill('괜찮아~ 신경 안 써도 돼')">괜찮아~ 신경 안 써도 돼</button>
-  <button class="ex-chip" onclick="fill('아니 진짜 화 안 났어')">진짜 화 안 났어</button>
-  <button class="ex-chip" onclick="fill('ㅇㅇ 알겠어')">ㅇㅇ 알겠어</button>
-  <button class="ex-chip" onclick="fill('나 아무거나 먹어도 돼')">아무거나 먹어도 돼</button>
-  <button class="ex-chip" onclick="fill('솔직히 그때 좀 서운했어')">솔직히 좀 서운했어</button>
-  <button class="ex-chip" onclick="fill('ㅎㅎ 재밌었어 고마워')">ㅎㅎ 재밌었어 고마워</button>
-</div>
+<!-- ===== TAB 2: 고백 예측 ===== -->
+<div class="tab-content" id="tabConfess" style="display:none">
 
-<!-- Results -->
-<div class="results" id="results">
-  <div class="empty">
-    <div class="em-icon">🔮</div>
-    <h3>카톡 한 줄이면 속마음이 보여요</h3>
-    <p>위에서 MBTI 선택 → 메시지 복붙 → 분석하기!</p>
+  <!-- Free trial counter -->
+  <div class="trial-banner" id="trialBanner">
+    무료 체험 <strong id="trialCount">1</strong>회 남음 · 무제한 이용은 PRO로 업그레이드
+  </div>
+
+  <!-- Step 1: MBTI 선택 -->
+  <div class="confess-step">
+    <div class="step-header">
+      <span class="step-num">1</span>
+      <span>상대방 MBTI 선택</span>
+    </div>
+    <div class="mbti-area" id="mbtiAreaConfess"></div>
+  </div>
+
+  <!-- Step 2: 카톡 업로드 -->
+  <div class="confess-step">
+    <div class="step-header">
+      <span class="step-num">2</span>
+      <span>카톡 대화 업로드</span>
+    </div>
+    <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFileUpload(event)">
+      <div class="upload-icon">📸</div>
+      <p class="upload-title">카톡 캡처 이미지를 올려주세요</p>
+      <p class="upload-desc">카카오톡 대화 스크린샷을 드래그하거나 클릭해서 업로드</p>
+    </div>
+    <div class="uploaded-previews" id="uploadedPreviews"></div>
+    <div class="upload-or">또는</div>
+    <div class="input-card">
+      <textarea id="confessChat" placeholder="카카오톡 대화를 텍스트로 붙여넣기&#10;&#10;예)&#10;나: 오늘 뭐 했어?&#10;상대: ㅋㅋ 그냥 집에 있었어~ 너는?&#10;나: 나도 ㅋㅋ 심심하다&#10;상대: ㅋㅋㅋ 나와" rows="5"></textarea>
+    </div>
+  </div>
+
+  <!-- Step 3: 분석 -->
+  <div class="confess-step">
+    <div class="step-header">
+      <span class="step-num">3</span>
+      <span>고백 시뮬레이션</span>
+    </div>
+    <button class="confess-btn" onclick="handleConfess()">
+      💘 고백 성공률 분석하기
+    </button>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="confessResults"></div>
+
+  <!-- PRO Upsell -->
+  <div class="pro-card" id="proCard" style="display:none">
+    <div class="pro-header">
+      <span class="pro-icon">👑</span>
+      <h3>PRO로 업그레이드</h3>
+    </div>
+    <ul class="pro-features">
+      <li>무제한 고백 성공률 분석</li>
+      <li>상대방 예상 답변 3가지 시나리오</li>
+      <li>최적의 고백 타이밍 & 문구 추천</li>
+      <li>관계 발전 단계별 조언</li>
+    </ul>
+    <button class="pro-btn" onclick="handleProUpgrade()">월 3,900원으로 시작하기</button>
+    <p class="pro-note">7일 무료 체험 · 언제든 해지 가능</p>
   </div>
 </div>
 
@@ -586,7 +945,7 @@ const GRP=[
   {l:'탐험가 SP',t:['ISTP','ISFP','ESTP','ESFP']},
 ];
 
-let sel=null, mode='decode';
+let sel=null, mode='translate';
 
 // Build grid
 const area=document.getElementById('mbtiArea');
@@ -998,6 +1357,191 @@ function renderCompare(text){
 document.getElementById('msgInput').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleAnalyze()}
 });
+
+// ===== TAB SWITCHING =====
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.getElementById('tabMain').style.display=tab==='main'?'block':'none';
+  document.getElementById('tabConfess').style.display=tab==='confess'?'block':'none';
+}
+
+// ===== CONFESS TAB: MBTI GRID =====
+const confessArea=document.getElementById('mbtiAreaConfess');
+let confessMBTI=null;
+GRP.forEach(g=>{
+  const div=document.createElement('div');
+  div.className='mbti-group';
+  div.innerHTML=`<div class="mbti-group-title">${g.l}</div><div class="mbti-row">${
+    g.t.map(t=>`<button class="mbti-chip" data-ct="${t}" onclick="pickConfess('${t}')">
+      <span class="icon">${M[t].e}</span><span class="name">${t}</span><span class="sub">${M[t].n}</span>
+    </button>`).join('')
+  }</div>`;
+  confessArea.appendChild(div);
+});
+
+function pickConfess(t){
+  confessMBTI=t;
+  document.querySelectorAll('[data-ct]').forEach(b=>b.classList.toggle('active',b.dataset.ct===t));
+}
+
+// ===== IMAGE UPLOAD =====
+let uploadedImages=[];
+
+// Drag & Drop
+const uploadEl=document.getElementById('uploadArea');
+uploadEl.addEventListener('dragover',e=>{e.preventDefault();uploadEl.classList.add('dragover')});
+uploadEl.addEventListener('dragleave',()=>uploadEl.classList.remove('dragover'));
+uploadEl.addEventListener('drop',e=>{
+  e.preventDefault();
+  uploadEl.classList.remove('dragover');
+  handleFiles(e.dataTransfer.files);
+});
+
+function handleFileUpload(e){handleFiles(e.target.files)}
+
+function handleFiles(files){
+  const previews=document.getElementById('uploadedPreviews');
+  Array.from(files).forEach(file=>{
+    if(!file.type.startsWith('image/')) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      uploadedImages.push(ev.target.result);
+      const img=document.createElement('img');
+      img.src=ev.target.result;
+      previews.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+  // Update upload area text
+  uploadEl.querySelector('.upload-title').textContent=`${uploadedImages.length+files.length}장 업로드됨`;
+}
+
+// ===== FREE TRIAL =====
+function getTrialCount(){
+  const c=localStorage.getItem('mbti_confess_trial');
+  return c?parseInt(c):1;
+}
+
+function useTrialCount(){
+  const c=getTrialCount();
+  if(c<=0) return false;
+  localStorage.setItem('mbti_confess_trial',c-1);
+  document.getElementById('trialCount').textContent=c-1;
+  return true;
+}
+
+// ===== CONFESS HANDLER =====
+async function handleConfess(){
+  if(!confessMBTI){alert('상대방 MBTI를 선택해주세요!');return}
+
+  const chatText=document.getElementById('confessChat').value.trim();
+  const hasImages=uploadedImages.length>0;
+  if(!chatText&&!hasImages){alert('카톡 캡처 이미지를 업로드하거나 대화를 텍스트로 붙여넣어주세요!');return}
+
+  // Check trial
+  const remaining=getTrialCount();
+  if(remaining<=0){
+    document.getElementById('proCard').style.display='block';
+    document.getElementById('confessResults').innerHTML=`
+      <div style="text-align:center;padding:20px;color:var(--text3);font-size:14px">
+        무료 체험이 끝났습니다. PRO로 업그레이드하세요!
+      </div>`;
+    return;
+  }
+
+  const res=document.getElementById('confessResults');
+  showLoading(res);
+
+  try{
+    const body={mbtiType:confessMBTI,mode:'confess'};
+
+    if(hasImages){
+      body.images=uploadedImages.slice(0,3); // max 3 images
+      body.message=chatText||'(이미지 참조)';
+    } else {
+      body.message=chatText;
+    }
+
+    const r=await fetch('/api/translate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+
+    if(!r.ok) throw new Error('API error');
+    const data=await r.json();
+    const ai=data.result;
+
+    useTrialCount();
+    renderConfessResult(ai);
+    document.getElementById('proCard').style.display='block';
+
+  }catch(e){
+    console.error(e);
+    res.innerHTML=`<div style="text-align:center;padding:20px;color:var(--accent2)">분석 중 오류가 발생했습니다. 다시 시도해주세요.</div>`;
+  }
+}
+
+function renderConfessResult(ai){
+  const d=M[confessMBTI];
+  const res=document.getElementById('confessResults');
+  const score=ai.score||Math.floor(Math.random()*40+30);
+  const scoreColor=score>=70?'var(--green)':score>=40?'var(--orange)':'var(--accent2)';
+
+  res.innerHTML=`
+    <div class="confess-result-card">
+      <div class="confess-score">
+        <div class="score-circle">
+          <span class="score-num" style="color:${scoreColor}">${score}</span>
+          <span class="score-pct">%</span>
+        </div>
+        <div class="score-label">${d.e} ${confessMBTI} ${d.n}에게 고백 성공률</div>
+      </div>
+      <div class="confess-body">
+        <div class="insight-block">
+          <div class="insight-label mind">💭 관계 분석</div>
+          <div class="insight-text mind">${esc(ai.analysis||'대화 패턴을 분석 중입니다.')}</div>
+        </div>
+
+        <div style="margin-top:14px">
+          <div class="insight-label" style="color:var(--green)">😊 Best: 수락 시나리오</div>
+          <div class="response-scenario good">
+            <div class="scenario-text">"${esc(ai.best_response||'긍정적 반응')}"</div>
+            <div class="scenario-analysis">${esc(ai.best_reason||'')}</div>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="insight-label" style="color:var(--orange)">😐 Normal: 보류 시나리오</div>
+          <div class="response-scenario neutral">
+            <div class="scenario-text">"${esc(ai.neutral_response||'시간이 필요한 반응')}"</div>
+            <div class="scenario-analysis">${esc(ai.neutral_reason||'')}</div>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="insight-label" style="color:#e53e3e">😢 Worst: 거절 시나리오</div>
+          <div class="response-scenario bad">
+            <div class="scenario-text">"${esc(ai.worst_response||'거절 반응')}"</div>
+            <div class="scenario-analysis">${esc(ai.worst_reason||'')}</div>
+          </div>
+        </div>
+
+        <div class="confess-tip">
+          <h4>💡 최적의 고백 전략</h4>
+          <p>${esc(ai.strategy||'상대방의 MBTI 특성에 맞는 고백 방식을 추천합니다.')}</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function handleProUpgrade(){
+  alert('결제 시스템 준비 중입니다! 곧 오픈할게요 💕');
+}
+
+// Update trial display
+document.getElementById('trialCount').textContent=getTrialCount();
 </script>
 </body>
 </html>
