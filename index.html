@@ -631,6 +631,7 @@ body{
 .confess-btn:active{transform:scale(.98)}
 
 /* Confess Result */
+/* ===== CONFESS RESULT ===== */
 .confess-result-card{
   background:var(--surface);
   border:1.5px solid var(--border);
@@ -640,56 +641,221 @@ body{
   animation:fadeUp .5s ease;
 }
 
+/* Score Section */
 .confess-score{
   text-align:center;
-  padding:28px 20px;
+  padding:32px 20px 24px;
   background:linear-gradient(135deg,#ffeef4,#ede9ff);
+  position:relative;
 }
 
-.score-circle{
-  width:100px;height:100px;
+.score-ring{
+  width:120px;height:120px;
   border-radius:50%;
-  background:var(--surface);
-  display:inline-flex;flex-direction:column;
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+  position:relative;
+}
+
+.score-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.score-ring circle{fill:none;stroke-width:6;stroke-linecap:round}
+.score-ring .bg{stroke:#e8e5e0}
+.score-ring .fill{transition:stroke-dashoffset 1.5s ease}
+
+.score-inner{
+  width:96px;height:96px;
+  border-radius:50%;
+  background:#fff;
+  display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  box-shadow:0 4px 20px rgba(232,69,122,.15);
+  box-shadow:0 4px 20px rgba(232,69,122,.12);
+  z-index:1;
+}
+
+.score-num{font-size:36px;font-weight:900;line-height:1}
+.score-pct{font-size:13px;color:var(--text3);font-weight:500}
+.score-label{font-size:15px;font-weight:700;color:var(--text)}
+.score-sub{font-size:12px;color:var(--text2);margin-top:2px}
+
+/* Signals */
+.signal-section{padding:16px;border-bottom:1px solid var(--border)}
+.signal-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+
+.signal-bars{display:flex;flex-direction:column;gap:8px}
+.signal-bar{display:flex;align-items:center;gap:10px}
+.signal-bar .sb-label{font-size:12px;color:var(--text2);width:80px;flex-shrink:0}
+.signal-bar .sb-track{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.signal-bar .sb-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.signal-bar .sb-val{font-size:11px;font-weight:700;width:32px;text-align:right}
+
+/* Analysis */
+.analysis-section{padding:16px;border-bottom:1px solid var(--border)}
+.analysis-text{font-size:14px;line-height:1.8;color:var(--text);padding:12px 14px;background:var(--surface2);border-radius:12px}
+
+/* KakaoTalk-style Chat Preview */
+.chat-preview{padding:16px}
+.chat-preview-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+
+.kakao-chat{
+  background:#b2c7d9;
+  border-radius:14px;
+  padding:16px 12px;
+  display:flex;flex-direction:column;gap:8px;
+}
+
+.kakao-date{
+  text-align:center;
+  font-size:10px;
+  color:#fff;
+  background:rgba(0,0,0,.15);
+  padding:3px 10px;
+  border-radius:10px;
+  align-self:center;
+  margin:4px 0;
+}
+
+.kakao-msg{
+  display:flex;gap:8px;
+  max-width:85%;
+  animation:fadeUp .4s ease;
+}
+
+.kakao-msg.me{
+  flex-direction:row-reverse;
+  align-self:flex-end;
+}
+
+.kakao-msg.them{align-self:flex-start}
+
+.kakao-avatar{
+  width:36px;height:36px;
+  border-radius:12px;
+  background:#ffd43b;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+  box-shadow:0 1px 3px rgba(0,0,0,.1);
+}
+
+.kakao-msg.me .kakao-avatar{
+  background:#a78bfa;
+}
+
+.kakao-bubble-wrap{display:flex;flex-direction:column;gap:2px}
+
+.kakao-name{font-size:10px;color:#555;font-weight:600;padding-left:4px}
+
+.kakao-bubble{
+  padding:8px 12px;
+  border-radius:12px;
+  font-size:13px;
+  line-height:1.6;
+  word-break:keep-all;
+  position:relative;
+  box-shadow:0 1px 2px rgba(0,0,0,.06);
+}
+
+.kakao-msg.me .kakao-bubble{
+  background:#fef01b;
+  color:#1a1a1a;
+  border-bottom-right-radius:4px;
+}
+
+.kakao-msg.them .kakao-bubble{
+  background:#fff;
+  color:#1a1a1a;
+  border-bottom-left-radius:4px;
+}
+
+.kakao-time{
+  font-size:9px;
+  color:rgba(0,0,0,.35);
+  align-self:flex-end;
+  margin-top:2px;
+}
+
+.kakao-msg.me .kakao-time{align-self:flex-end}
+
+/* Scenario tabs */
+.scenario-tabs{
+  display:flex;gap:4px;
+  padding:16px 16px 0;
+}
+
+.scenario-tab{
+  flex:1;
+  padding:10px 8px;
+  border:1.5px solid var(--border);
+  border-bottom:none;
+  border-radius:12px 12px 0 0;
+  background:var(--surface2);
+  font-size:12px;font-weight:600;
+  color:var(--text3);
+  cursor:pointer;font-family:inherit;
+  text-align:center;
+  transition:all .2s;
+}
+
+.scenario-tab.active{
+  background:var(--surface);
+  color:var(--text);
+  border-color:var(--border);
+  position:relative;
+}
+
+.scenario-tab.active::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;
+  height:2px;background:var(--surface);
+}
+
+.scenario-tab .st-pct{
+  display:block;font-size:16px;font-weight:900;margin-top:2px;
+}
+
+.scenario-tab.good .st-pct{color:var(--green)}
+.scenario-tab.neutral .st-pct{color:var(--orange)}
+.scenario-tab.bad .st-pct{color:#e53e3e}
+
+.scenario-content{
+  padding:0 16px 16px;
+  border:1.5px solid var(--border);
+  border-top:none;
+  border-radius:0 0 14px 14px;
+  background:var(--surface);
+}
+
+.scenario-reason{
+  font-size:12px;color:var(--text2);
+  padding:10px 0;
+  font-style:italic;
+  border-bottom:1px solid var(--border);
   margin-bottom:12px;
 }
 
-.score-num{font-size:32px;font-weight:900;color:var(--accent2);line-height:1}
-.score-pct{font-size:12px;color:var(--text3);font-weight:500}
-.score-label{font-size:14px;font-weight:600;color:var(--text)}
-
-.confess-body{padding:16px}
-
-.response-scenario{
-  padding:14px;
-  border-radius:12px;
-  margin-bottom:10px;
-  border-left:3px solid var(--accent);
-}
-
-.response-scenario.good{background:#e6f9f0;border-left-color:var(--green)}
-.response-scenario.neutral{background:var(--orange-light);border-left-color:var(--orange)}
-.response-scenario.bad{background:#fff5f5;border-left-color:#e53e3e}
-
-.scenario-label{font-size:11px;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
-.scenario-label.good{color:var(--green)}
-.scenario-label.neutral{color:var(--orange)}
-.scenario-label.bad{color:#e53e3e}
-
-.scenario-text{font-size:14px;line-height:1.7;color:var(--text)}
-.scenario-analysis{font-size:12px;color:var(--text2);margin-top:6px;font-style:italic}
-
+/* Strategy */
 .confess-tip{
-  padding:14px;
-  border-radius:12px;
-  background:var(--accent-light);
-  margin-top:14px;
+  padding:16px;
 }
 
-.confess-tip h4{font-size:13px;color:var(--accent);margin-bottom:6px}
-.confess-tip p{font-size:13px;line-height:1.7;color:var(--text)}
+.tip-card{
+  padding:16px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#ede9ff,#ffeef4);
+  border:1px solid #a78bfa22;
+}
+
+.tip-card h4{font-size:14px;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.tip-card p{font-size:13px;line-height:1.8;color:var(--text)}
+
+.tip-timing{
+  margin-top:12px;
+  padding:12px;
+  background:var(--surface);
+  border-radius:10px;
+}
+
+.tip-timing h5{font-size:12px;color:var(--accent2);margin-bottom:6px}
+.tip-timing p{font-size:12px;line-height:1.7;color:var(--text2)}
 
 /* PRO Card */
 .pro-card{
@@ -1696,54 +1862,212 @@ function renderConfessResult(ai){
   const d=M[confessMBTI];
   const res=document.getElementById('confessResults');
   const score=ai.score||Math.floor(Math.random()*40+30);
-  const scoreColor=score>=70?'var(--green)':score>=40?'var(--orange)':'var(--accent2)';
+  const scoreColor=score>=70?'#1a9960':score>=40?'#e07820':'#e8457a';
+  const scoreGrade=score>=80?'매우 높음':score>=60?'높음':score>=40?'보통':score>=20?'낮음':'매우 낮음';
+
+  // 호감 신호 수치 (AI에서 안 주면 score 기반 생성)
+  const signals={
+    reply: ai.signal_reply||Math.min(100,score+Math.floor(Math.random()*15)),
+    emoji: ai.signal_emoji||Math.min(100,score+Math.floor(Math.random()*20-10)),
+    interest: ai.signal_interest||Math.min(100,score+Math.floor(Math.random()*10)),
+    initiate: ai.signal_initiate||Math.min(100,Math.max(10,score-Math.floor(Math.random()*15))),
+  };
+
+  // 시나리오 확률
+  const bestPct=score>=70?Math.floor(score*0.7):Math.floor(score*0.5);
+  const worstPct=100-score;
+  const neutralPct=100-bestPct-worstPct;
+
+  const circ=2*Math.PI*54; // SVG circle circumference
+
+  const now=new Date();
+  const timeStr=`${now.getHours()>12?'오후':'오전'} ${now.getHours()>12?now.getHours()-12:now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
 
   res.innerHTML=`
     <div class="confess-result-card">
+
+      <!-- 1. Score Ring -->
       <div class="confess-score">
-        <div class="score-circle">
-          <span class="score-num" style="color:${scoreColor}">${score}</span>
-          <span class="score-pct">%</span>
+        <div class="score-ring">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle class="bg" cx="60" cy="60" r="54"/>
+            <circle class="fill" cx="60" cy="60" r="54"
+              stroke="${scoreColor}"
+              stroke-dasharray="${circ}"
+              stroke-dashoffset="${circ - (circ * score / 100)}"
+            />
+          </svg>
+          <div class="score-inner">
+            <span class="score-num" style="color:${scoreColor}">${score}</span>
+            <span class="score-pct">/ 100</span>
+          </div>
         </div>
         <div class="score-label">${d.e} ${confessMBTI} ${d.n}에게 고백 성공률</div>
+        <div class="score-sub">${scoreGrade}</div>
       </div>
-      <div class="confess-body">
-        <div class="insight-block">
-          <div class="insight-label mind">💭 관계 분석</div>
-          <div class="insight-text mind">${esc(ai.analysis||'대화 패턴을 분석 중입니다.')}</div>
-        </div>
 
-        <div style="margin-top:14px">
-          <div class="insight-label" style="color:var(--green)">😊 Best: 수락 시나리오</div>
-          <div class="response-scenario good">
-            <div class="scenario-text">"${esc(ai.best_response||'긍정적 반응')}"</div>
-            <div class="scenario-analysis">${esc(ai.best_reason||'')}</div>
+      <!-- 2. 호감 신호 분석 -->
+      <div class="signal-section">
+        <div class="signal-title">📊 호감 신호 분석</div>
+        <div class="signal-bars">
+          <div class="signal-bar">
+            <span class="sb-label">답장 속도</span>
+            <div class="sb-track"><div class="sb-fill" style="width:${signals.reply}%;background:${signals.reply>=60?'var(--green)':'var(--orange)'}"></div></div>
+            <span class="sb-val" style="color:${signals.reply>=60?'var(--green)':'var(--orange)'}">${signals.reply}%</span>
+          </div>
+          <div class="signal-bar">
+            <span class="sb-label">이모티콘/ㅋㅋ</span>
+            <div class="sb-track"><div class="sb-fill" style="width:${signals.emoji}%;background:${signals.emoji>=60?'var(--green)':'var(--orange)'}"></div></div>
+            <span class="sb-val" style="color:${signals.emoji>=60?'var(--green)':'var(--orange)'}">${signals.emoji}%</span>
+          </div>
+          <div class="signal-bar">
+            <span class="sb-label">관심 표현</span>
+            <div class="sb-track"><div class="sb-fill" style="width:${signals.interest}%;background:${signals.interest>=60?'var(--green)':'var(--orange)'}"></div></div>
+            <span class="sb-val" style="color:${signals.interest>=60?'var(--green)':'var(--orange)'}">${signals.interest}%</span>
+          </div>
+          <div class="signal-bar">
+            <span class="sb-label">대화 주도</span>
+            <div class="sb-track"><div class="sb-fill" style="width:${signals.initiate}%;background:${signals.initiate>=60?'var(--green)':'var(--orange)'}"></div></div>
+            <span class="sb-val" style="color:${signals.initiate>=60?'var(--green)':'var(--orange)'}">${signals.initiate}%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 관계 분석 -->
+      <div class="analysis-section">
+        <div class="signal-title">💭 AI 관계 분석</div>
+        <div class="analysis-text">${esc(ai.analysis||'대화 패턴을 기반으로 분석합니다.')}</div>
+      </div>
+
+      <!-- 4. 시나리오별 카톡 미리보기 -->
+      <div class="scenario-tabs">
+        <button class="scenario-tab good active" onclick="showScenario('good')" data-sc="good">
+          😊 수락
+          <span class="st-pct">${bestPct}%</span>
+        </button>
+        <button class="scenario-tab neutral" onclick="showScenario('neutral')" data-sc="neutral">
+          🤔 보류
+          <span class="st-pct">${neutralPct}%</span>
+        </button>
+        <button class="scenario-tab bad" onclick="showScenario('bad')" data-sc="bad">
+          😢 거절
+          <span class="st-pct">${worstPct}%</span>
+        </button>
+      </div>
+
+      <div class="scenario-content">
+        <!-- Good -->
+        <div class="scenario-panel" id="scGood">
+          <div class="scenario-reason">${esc(ai.best_reason||'호감 신호가 긍정적입니다')}</div>
+          <div class="kakao-chat">
+            <div class="kakao-date">오늘</div>
+            <div class="kakao-msg me">
+              <div class="kakao-avatar">나</div>
+              <div class="kakao-bubble-wrap">
+                <div class="kakao-bubble">나 사실 너한테 할 말이 있어...</div>
+                <div class="kakao-time">${timeStr}</div>
+              </div>
+            </div>
+            <div class="kakao-msg me">
+              <div class="kakao-avatar">나</div>
+              <div class="kakao-bubble-wrap">
+                <div class="kakao-bubble">나 너 좋아해. 우리 사귀자</div>
+                <div class="kakao-time">${timeStr}</div>
+              </div>
+            </div>
+            <div class="kakao-msg them">
+              <div class="kakao-avatar">${d.e}</div>
+              <div class="kakao-bubble-wrap">
+                <div class="kakao-name">${confessMBTI}</div>
+                <div class="kakao-bubble">${esc(ai.best_response||'나도 좋아!')}</div>
+                <div class="kakao-time">${timeStr}</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div style="margin-top:10px">
-          <div class="insight-label" style="color:var(--orange)">😐 Normal: 보류 시나리오</div>
-          <div class="response-scenario neutral">
-            <div class="scenario-text">"${esc(ai.neutral_response||'시간이 필요한 반응')}"</div>
-            <div class="scenario-analysis">${esc(ai.neutral_reason||'')}</div>
+        <!-- Neutral -->
+        <div class="scenario-panel" id="scNeutral" style="display:none">
+          <div class="scenario-reason">${esc(ai.neutral_reason||'감정 정리가 필요한 상태입니다')}</div>
+          <div class="kakao-chat">
+            <div class="kakao-date">오늘</div>
+            <div class="kakao-msg me">
+              <div class="kakao-avatar">나</div>
+              <div class="kakao-bubble-wrap">
+                <div class="kakao-bubble">나 사실 너한테 할 말이 있어...</div>
+                <div class="kakao-time">${timeStr}</div>
+              </div>
+            </div>
+            <div class="kakao-msg me">
+              <div class="kakao-avatar">나</div>
+              <div class="kakao-bubble-wrap">
+                <div class="kakao-bubble">나 너 좋아해. 우리 사귀자</div>
+                <div class="kakao-time">${timeStr}</div>
+              </div>
+            </div>
+            <div class="kakao-msg them">
+              <div class="kakao-avatar">${d.e}</div>
+              <div class="kakao-bubble-wrap">
+                <div class="kakao-name">${confessMBTI}</div>
+                <div class="kakao-bubble">${esc(ai.neutral_response||'생각할 시간을 줘...')}</div>
+                <div class="kakao-time">${timeStr}</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div style="margin-top:10px">
-          <div class="insight-label" style="color:#e53e3e">😢 Worst: 거절 시나리오</div>
-          <div class="response-scenario bad">
-            <div class="scenario-text">"${esc(ai.worst_response||'거절 반응')}"</div>
-            <div class="scenario-analysis">${esc(ai.worst_reason||'')}</div>
+        <!-- Bad -->
+        <div class="scenario-panel" id="scBad" style="display:none">
+          <div class="scenario-reason">${esc(ai.worst_reason||'현재로서는 어려울 수 있습니다')}</div>
+          <div class="kakao-chat">
+            <div class="kakao-date">오늘</div>
+            <div class="kakao-msg me">
+              <div class="kakao-avatar">나</div>
+              <div class="kakao-bubble-wrap">
+                <div class="kakao-bubble">나 사실 너한테 할 말이 있어...</div>
+                <div class="kakao-time">${timeStr}</div>
+              </div>
+            </div>
+            <div class="kakao-msg me">
+              <div class="kakao-avatar">나</div>
+              <div class="kakao-bubble-wrap">
+                <div class="kakao-bubble">나 너 좋아해. 우리 사귀자</div>
+                <div class="kakao-time">${timeStr}</div>
+              </div>
+            </div>
+            <div class="kakao-msg them">
+              <div class="kakao-avatar">${d.e}</div>
+              <div class="kakao-bubble-wrap">
+                <div class="kakao-name">${confessMBTI}</div>
+                <div class="kakao-bubble">${esc(ai.worst_response||'미안...')}</div>
+                <div class="kakao-time">${timeStr}</div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div class="confess-tip">
+      <!-- 5. 전략 -->
+      <div class="confess-tip">
+        <div class="tip-card">
           <h4>💡 최적의 고백 전략</h4>
           <p>${esc(ai.strategy||'상대방의 MBTI 특성에 맞는 고백 방식을 추천합니다.')}</p>
         </div>
+        <div class="tip-timing" style="margin-top:10px">
+          <h5>⏰ 추천 타이밍</h5>
+          <p>${esc(ai.timing||`${confessMBTI}는 ${d.h.split('.')[0]}. 충분한 신뢰가 쌓인 후 1:1 상황에서 진심을 전하세요.`)}</p>
+        </div>
       </div>
+
     </div>
   `;
+}
+
+function showScenario(type){
+  document.querySelectorAll('.scenario-tab').forEach(t=>t.classList.toggle('active',t.dataset.sc===type));
+  document.getElementById('scGood').style.display=type==='good'?'block':'none';
+  document.getElementById('scNeutral').style.display=type==='neutral'?'block':'none';
+  document.getElementById('scBad').style.display=type==='bad'?'block':'none';
 }
 
 // ===== TOSS PAYMENTS =====

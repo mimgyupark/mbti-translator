@@ -81,7 +81,12 @@ export default async function handler(req, res) {
   "neutral_reason": "보류 시나리오의 근거 (1문장)",
   "worst_response": "${mbtiType}이 고백을 거절할 때 할 법한 대답",
   "worst_reason": "거절 시나리오의 근거 (1문장)",
-  "strategy": "이 ${mbtiType}에게 고백할 때 최적의 전략 (구체적 문구 예시 포함, 3-4문장)"
+  "strategy": "이 ${mbtiType}에게 고백할 때 최적의 전략 (구체적 문구 예시 포함, 3-4문장)",
+  "timing": "고백하기 좋은 타이밍과 상황 (1-2문장, 이 MBTI 특성 반영)",
+  "signal_reply": 답장속도 호감도(0-100 숫자),
+  "signal_emoji": 이모티콘사용 호감도(0-100 숫자),
+  "signal_interest": 관심표현 호감도(0-100 숫자),
+  "signal_initiate": 대화주도 호감도(0-100 숫자)
 }`;
     userPrompt = `아래는 나와 ${mbtiType}인 상대방의 카카오톡 대화야. 고백 성공률을 분석해줘:\n\n${message}`;
 
