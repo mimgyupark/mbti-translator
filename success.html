@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>결제 완료 - MBTI 카톡 해석기 PRO</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:#faf9f7;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{max-width:420px;width:90%;background:#fff;border-radius:20px;padding:40px 28px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.icon{width:72px;height:72px;border-radius:50%;background:#e6f9f0;display:inline-flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:20px}
+h1{font-size:22px;font-weight:900;margin-bottom:8px;color:#1a1a1a}
+.desc{font-size:14px;color:#6b6560;line-height:1.7;margin-bottom:24px}
+.info{background:#f5f3f0;border-radius:12px;padding:16px;margin-bottom:24px;text-align:left}
+.info-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
+.info-row .label{color:#a09890}
+.info-row .value{font-weight:700;color:#1a1a1a}
+.btn{display:inline-block;padding:14px 36px;background:#5b4cdb;color:#fff;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;transition:all .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(91,76,219,.3)}
+.badge{display:inline-block;padding:4px 12px;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;border-radius:6px;font-size:11px;font-weight:800;margin-bottom:16px}
+#loading{display:block}
+#result{display:none}
+#error{display:none}
+.error-icon{background:#fff5f5}
+.error h1{color:#e53e3e}
+</style>
+</head>
+<body>
+<div class="card">
+  <!-- Loading -->
+  <div id="loading">
+    <div class="icon">⏳</div>
+    <h1>결제 확인 중...</h1>
+    <p class="desc">잠시만 기다려주세요</p>
+  </div>
+
+  <!-- Success -->
+  <div id="result">
+    <div class="icon">✅</div>
+    <div class="badge">PRO 활성화 완료</div>
+    <h1>결제가 완료되었습니다!</h1>
+    <p class="desc">MBTI 카톡 해석기 PRO의 모든 기능을<br>무제한으로 이용할 수 있습니다</p>
+    <div class="info">
+      <div class="info-row"><span class="label">주문번호</span><span class="value" id="orderId">-</span></div>
+      <div class="info-row"><span class="label">결제금액</span><span class="value" id="amount">-</span></div>
+      <div class="info-row"><span class="label">결제수단</span><span class="value" id="method">-</span></div>
+      <div class="info-row"><span class="label">상태</span><span class="value" style="color:#1a9960">결제완료</span></div>
+    </div>
+    <a href="/" class="btn">서비스 이용하기</a>
+  </div>
+
+  <!-- Error -->
+  <div id="error">
+    <div class="icon error-icon">❌</div>
+    <h1>결제 확인 실패</h1>
+    <p class="desc" id="errorMsg">오류가 발생했습니다</p>
+    <a href="/" class="btn" style="background:#e8457a">돌아가기</a>
+  </div>
+</div>
+
+<script>
+async function confirmPayment() {
+  const params = new URLSearchParams(window.location.search);
+  const paymentKey = params.get('paymentKey');
+  const orderId = params.get('orderId');
+  const amount = params.get('amount');
+
+  if (!paymentKey || !orderId || !amount) {
+    showError('결제 정보가 누락되었습니다.');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/payment-confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paymentKey, orderId, amount: Number(amount) }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      // PRO 활성화
+      localStorage.setItem('mbti_pro', 'true');
+      localStorage.setItem('mbti_pro_date', new Date().toISOString());
+      localStorage.setItem('mbti_confess_trial', '999');
+
+      document.getElementById('orderId').textContent = data.orderId;
+      document.getElementById('amount').textContent = data.totalAmount.toLocaleString() + '원';
+      document.getElementById('method').textContent = data.method || '-';
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+    } else {
+      showError(data.error || '결제 승인에 실패했습니다.');
+    }
+  } catch (e) {
+    showError('서버 연결에 실패했습니다: ' + e.message);
+  }
+}
+
+function showError(msg) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('errorMsg').textContent = msg;
+  document.getElementById('error').style.display = 'block';
+}
+
+confirmPayment();
+</script>
+</body>
+</html>

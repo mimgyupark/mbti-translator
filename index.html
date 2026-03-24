@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MBTI 카톡 해석기</title>
 <meta name="description" content="친구의 카톡을 붙여넣으면 MBTI별 진짜 속마음을 알려드려요">
+<script src="https://js.tosspayments.com/v2/standard"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -741,6 +742,47 @@ body{
   margin-top:8px;
 }
 
+.price-options{
+  display:flex;gap:8px;
+  margin-bottom:16px;
+}
+
+.price-btn{
+  flex:1;
+  padding:14px 10px;
+  border:2px solid #ffffff22;
+  border-radius:12px;
+  background:rgba(255,255,255,.06);
+  cursor:pointer;
+  font-family:inherit;
+  text-align:center;
+  transition:all .2s;
+  color:#c4b5fd;
+}
+
+.price-btn.active{
+  border-color:#f59e0b;
+  background:rgba(245,158,11,.12);
+  color:#fff;
+}
+
+.price-btn:hover{border-color:#f59e0b88}
+.price-label{display:block;font-size:11px;font-weight:600;margin-bottom:4px;opacity:.7}
+.price-amount{display:block;font-size:20px;font-weight:900;color:#fff}
+.price-per{display:block;font-size:11px;margin-top:2px;opacity:.6}
+.price-per em{color:#34d399;font-style:normal;font-weight:700}
+
+.pro-test-badge{
+  margin-top:12px;
+  padding:6px 12px;
+  border-radius:8px;
+  background:rgba(245,158,11,.15);
+  border:1px solid #f59e0b44;
+  font-size:11px;
+  color:#fbbf24;
+  display:inline-block;
+}
+
 .blur-overlay{
   filter:blur(6px);
   pointer-events:none;
@@ -896,8 +938,21 @@ body{
       <li>최적의 고백 타이밍 & 문구 추천</li>
       <li>관계 발전 단계별 조언</li>
     </ul>
-    <button class="pro-btn" onclick="handleProUpgrade()">월 3,900원으로 시작하기</button>
-    <p class="pro-note">7일 무료 체험 · 언제든 해지 가능</p>
+    <div class="price-options">
+      <button class="price-btn active" data-plan="monthly" onclick="selectPlan('monthly')">
+        <span class="price-label">월간</span>
+        <span class="price-amount">3,900원</span>
+        <span class="price-per">/월</span>
+      </button>
+      <button class="price-btn" data-plan="yearly" onclick="selectPlan('yearly')">
+        <span class="price-label">연간</span>
+        <span class="price-amount">29,900원</span>
+        <span class="price-per">/년 <em>36% 할인</em></span>
+      </button>
+    </div>
+    <button class="pro-btn" onclick="handleProUpgrade()">결제하기</button>
+    <p class="pro-note">토스페이먼츠 안전결제 · 언제든 해지 가능</p>
+    <div class="pro-test-badge">🧪 현재 테스트 모드</div>
   </div>
 </div>
 
@@ -1691,9 +1746,78 @@ function renderConfessResult(ai){
   `;
 }
 
-function handleProUpgrade(){
-  alert('결제 시스템 준비 중입니다! 곧 오픈할게요 💕');
+// ===== TOSS PAYMENTS =====
+let selectedPlan='monthly';
+const PLANS={
+  monthly:{amount:3900,name:'MBTI 카톡 해석기 PRO (월간)'},
+  yearly:{amount:29900,name:'MBTI 카톡 해석기 PRO (연간)'},
+};
+
+// 토스페이먼츠 테스트 클라이언트 키
+const TOSS_CLIENT_KEY='test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
+let tossPayments=null;
+
+async function initToss(){
+  if(tossPayments) return tossPayments;
+  tossPayments=TossPayments(TOSS_CLIENT_KEY);
+  return tossPayments;
 }
+
+function selectPlan(plan){
+  selectedPlan=plan;
+  document.querySelectorAll('.price-btn').forEach(b=>
+    b.classList.toggle('active',b.dataset.plan===plan));
+}
+
+async function handleProUpgrade(){
+  // 이미 PRO면 스킵
+  if(localStorage.getItem('mbti_pro')==='true'){
+    alert('이미 PRO 회원입니다!');
+    return;
+  }
+
+  const plan=PLANS[selectedPlan];
+  const orderId='MBTI_'+Date.now()+'_'+Math.random().toString(36).substr(2,6);
+
+  try{
+    const tp=await initToss();
+    const payment=tp.payment({customerKey:'guest_'+Date.now()});
+
+    await payment.requestPayment({
+      method:'CARD',
+      amount:{currency:'KRW',value:plan.amount},
+      orderId:orderId,
+      orderName:plan.name,
+      successUrl:window.location.origin+'/success.html',
+      failUrl:window.location.origin+'/fail.html',
+      card:{
+        useEscrow:false,
+        flowMode:'DEFAULT',
+        useCardPoint:false,
+      },
+    });
+  }catch(e){
+    if(e.code==='USER_CANCEL'){
+      // 사용자가 취소
+      return;
+    }
+    console.error('Payment error:',e);
+    alert('결제 중 오류가 발생했습니다: '+(e.message||e.code));
+  }
+}
+
+// PRO 상태 체크
+function checkProStatus(){
+  if(localStorage.getItem('mbti_pro')==='true'){
+    // PRO 유저: 무제한
+    localStorage.setItem('mbti_confess_trial','999');
+    const banner=document.getElementById('trialBanner');
+    if(banner) banner.innerHTML='<strong>👑 PRO</strong> 무제한 이용 중';
+    const proCard=document.getElementById('proCard');
+    if(proCard) proCard.style.display='none';
+  }
+}
+checkProStatus();
 
 // Update trial display
 document.getElementById('trialCount').textContent=getTrialCount();
