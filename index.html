@@ -561,6 +561,38 @@ body{
   border:2px solid var(--border);
 }
 
+.upload-guide{
+  margin-top:10px;
+  padding:14px;
+  background:var(--green-light);
+  border:1px solid #34d39944;
+  border-radius:12px;
+  font-size:12px;
+  color:var(--text);
+}
+
+.guide-parsed{line-height:1.7}
+.guide-parsed .gp-stat{font-weight:700;color:var(--green)}
+.guide-parsed .gp-preview{
+  margin-top:8px;
+  padding:10px;
+  background:var(--surface);
+  border-radius:8px;
+  font-size:11px;
+  color:var(--text2);
+  max-height:120px;
+  overflow-y:auto;
+  white-space:pre-wrap;
+  word-break:break-all;
+}
+
+.uploaded-previews img{
+  width:80px;height:80px;
+  object-fit:cover;
+  border-radius:10px;
+  border:2px solid var(--border);
+}
+
 .upload-or{
   text-align:center;
   font-size:12px;color:var(--text3);
@@ -823,12 +855,15 @@ body{
       <span>카톡 대화 업로드</span>
     </div>
     <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-      <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFileUpload(event)">
-      <div class="upload-icon">📸</div>
-      <p class="upload-title">카톡 캡처 이미지를 올려주세요</p>
-      <p class="upload-desc">카카오톡 대화 스크린샷을 드래그하거나 클릭해서 업로드</p>
+      <input type="file" id="fileInput" accept=".txt,.csv,image/*" multiple style="display:none" onchange="handleFileUpload(event)">
+      <div class="upload-icon">📂</div>
+      <p class="upload-title">카톡 대화 내보내기 파일 업로드</p>
+      <p class="upload-desc">카카오톡 → 대화방 → ≡ → 대화 내보내기 → .txt 파일<br>또는 대화 캡처 이미지도 가능</p>
     </div>
     <div class="uploaded-previews" id="uploadedPreviews"></div>
+    <div class="upload-guide" id="uploadGuide" style="display:none">
+      <div class="guide-parsed" id="guideParsed"></div>
+    </div>
     <div class="upload-or">또는</div>
     <div class="input-card">
       <textarea id="confessChat" placeholder="카카오톡 대화를 텍스트로 붙여넣기&#10;&#10;예)&#10;나: 오늘 뭐 했어?&#10;상대: ㅋㅋ 그냥 집에 있었어~ 너는?&#10;나: 나도 ㅋㅋ 심심하다&#10;상대: ㅋㅋㅋ 나와" rows="5"></textarea>
@@ -1397,23 +1432,125 @@ uploadEl.addEventListener('drop',e=>{
   handleFiles(e.dataTransfer.files);
 });
 
+let parsedChatText=''; // 파싱된 카톡 텍스트
+
 function handleFileUpload(e){handleFiles(e.target.files)}
 
 function handleFiles(files){
   const previews=document.getElementById('uploadedPreviews');
   Array.from(files).forEach(file=>{
-    if(!file.type.startsWith('image/')) return;
-    const reader=new FileReader();
-    reader.onload=ev=>{
-      uploadedImages.push(ev.target.result);
-      const img=document.createElement('img');
-      img.src=ev.target.result;
-      previews.appendChild(img);
-    };
-    reader.readAsDataURL(file);
+    // 텍스트 파일 (카톡 내보내기)
+    if(file.name.endsWith('.txt')||file.name.endsWith('.csv')||file.type==='text/plain'){
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        const raw=ev.target.result;
+        const parsed=parseKakaoChat(raw);
+        parsedChatText=parsed.text;
+        // 자동으로 textarea에도 넣기
+        document.getElementById('confessChat').value=parsed.text;
+        // 가이드 표시
+        const guide=document.getElementById('uploadGuide');
+        guide.style.display='block';
+        document.getElementById('guideParsed').innerHTML=`
+          <span class="gp-stat">✓ ${file.name} 파싱 완료</span><br>
+          총 <strong>${parsed.totalLines}</strong>줄 ·
+          참여자: <strong>${parsed.participants.join(', ')}</strong> ·
+          대화 <strong>${parsed.messageCount}</strong>개
+          <div class="gp-preview">${esc(parsed.preview)}</div>
+        `;
+        uploadEl.querySelector('.upload-title').textContent=`✓ ${file.name} 업로드됨`;
+        uploadEl.querySelector('.upload-desc').textContent=`${parsed.messageCount}개 대화 감지됨`;
+      };
+      reader.readAsText(file,'utf-8');
+      return;
+    }
+
+    // 이미지 파일
+    if(file.type.startsWith('image/')){
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        uploadedImages.push(ev.target.result);
+        const img=document.createElement('img');
+        img.src=ev.target.result;
+        previews.appendChild(img);
+        uploadEl.querySelector('.upload-title').textContent=`${uploadedImages.length}장 업로드됨`;
+      };
+      reader.readAsDataURL(file);
+    }
   });
-  // Update upload area text
-  uploadEl.querySelector('.upload-title').textContent=`${uploadedImages.length+files.length}장 업로드됨`;
+}
+
+// ===== 카카오톡 내보내기 파싱 =====
+function parseKakaoChat(raw){
+  const lines=raw.split('\n');
+  const messages=[];
+  const participants=new Set();
+  let currentMsg=null;
+
+  // 카카오톡 내보내기 포맷 패턴들:
+  // "[이름] [오후 3:24] 메시지" (iOS)
+  // "2024년 3월 15일 오후 3:24, 이름 : 메시지" (Android)
+  // "이름, [2024. 3. 15. 오후 3:24] 메시지" (PC)
+  const patterns=[
+    // [이름] [시간] 메시지 (iOS)
+    /^\[([^\]]+)\]\s*\[([^\]]+)\]\s*(.+)$/,
+    // 날짜, 이름 : 메시지 (Android)
+    /^\d{4}[년.]\s*\d{1,2}[월.]\s*\d{1,2}[일.]?\s*(?:오전|오후)?\s*\d{1,2}:\d{2},?\s*([^:]+)\s*:\s*(.+)$/,
+    // 이름, [날짜 시간] 메시지 (PC)
+    /^([^,]+),\s*\[\d{4}\.\s*\d{1,2}\.\s*\d{1,2}\.\s*(?:오전|오후)\s*\d{1,2}:\d{2}\]\s*(.+)$/,
+    // 간단 형식: 이름 : 메시지
+    /^([가-힣a-zA-Z0-9_\s]{1,20})\s*:\s*(.+)$/,
+  ];
+
+  // 날짜 구분선 패턴
+  const datePattern=/^-{2,}|^\d{4}[년.]\s*\d{1,2}[월.]\s*\d{1,2}[일.]?\s*[가-힣]+요일|^-+\s*\d{4}/;
+  // 시스템 메시지 패턴
+  const systemPattern=/님이 들어왔습니다|님이 나갔습니다|채팅방을 나갔습니다|님을 초대했습니다|사진$|이모티콘$|삭제된 메시지입니다/;
+
+  for(const line of lines){
+    const trimmed=line.trim();
+    if(!trimmed) continue;
+    if(datePattern.test(trimmed)) continue;
+    if(systemPattern.test(trimmed)) continue;
+
+    let matched=false;
+    for(const pat of patterns){
+      const m=trimmed.match(pat);
+      if(m){
+        const name=m[1].trim();
+        const msg=m[m.length-1].trim(); // 마지막 캡처 그룹이 메시지
+        if(name&&msg&&name.length<=20){
+          participants.add(name);
+          messages.push({name,msg});
+          matched=true;
+          break;
+        }
+      }
+    }
+
+    // 매칭 안 되면 이전 메시지의 연속으로 처리
+    if(!matched&&messages.length>0){
+      messages[messages.length-1].msg+=' '+trimmed;
+    }
+  }
+
+  // 대화를 "이름: 메시지" 형태로 정리
+  const formatted=messages.map(m=>`${m.name}: ${m.msg}`).join('\n');
+
+  // 최근 100개만 사용 (API 토큰 절약)
+  const recent=messages.slice(-100);
+  const recentFormatted=recent.map(m=>`${m.name}: ${m.msg}`).join('\n');
+
+  // 미리보기 (마지막 10개)
+  const previewMsgs=messages.slice(-10).map(m=>`${m.name}: ${m.msg}`).join('\n');
+
+  return {
+    text: recentFormatted,
+    totalLines: lines.length,
+    messageCount: messages.length,
+    participants: [...participants],
+    preview: previewMsgs||'(파싱된 대화 없음 - 텍스트를 직접 붙여넣어 주세요)',
+  };
 }
 
 // ===== FREE TRIAL =====
@@ -1434,9 +1571,9 @@ function useTrialCount(){
 async function handleConfess(){
   if(!confessMBTI){alert('상대방 MBTI를 선택해주세요!');return}
 
-  const chatText=document.getElementById('confessChat').value.trim();
+  const chatText=document.getElementById('confessChat').value.trim()||parsedChatText;
   const hasImages=uploadedImages.length>0;
-  if(!chatText&&!hasImages){alert('카톡 캡처 이미지를 업로드하거나 대화를 텍스트로 붙여넣어주세요!');return}
+  if(!chatText&&!hasImages){alert('카톡 대화 내보내기 파일(.txt)을 업로드하거나\n대화를 텍스트로 붙여넣어주세요!');return}
 
   // Check trial
   const remaining=getTrialCount();
