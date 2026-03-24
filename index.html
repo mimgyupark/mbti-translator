@@ -1044,7 +1044,7 @@ body{
 
   <!-- Free trial counter -->
   <div class="trial-banner" id="trialBanner">
-    무료 체험 <strong id="trialCount">1</strong>회 남음 · 무제한 이용은 PRO로 업그레이드
+    🧪 <strong>Beta</strong> · 현재 무제한 무료 체험 중
   </div>
 
   <!-- Step 1: MBTI 선택 -->
@@ -1814,17 +1814,7 @@ async function handleConfess(){
   const hasImages=uploadedImages.length>0;
   if(!chatText&&!hasImages){alert('카톡 대화 내보내기 파일(.txt)을 업로드하거나\n대화를 텍스트로 붙여넣어주세요!');return}
 
-  // Check trial
-  const remaining=getTrialCount();
-  if(remaining<=0){
-    document.getElementById('proCard').style.display='block';
-    document.getElementById('confessResults').innerHTML=`
-      <div style="text-align:center;padding:20px;color:var(--text3);font-size:14px">
-        무료 체험이 끝났습니다. PRO로 업그레이드하세요!
-      </div>`;
-    return;
-  }
-
+  // Beta: 횟수 차감만 하고 차단하지 않음
   const res=document.getElementById('confessResults');
   showLoading(res);
 
@@ -1848,7 +1838,6 @@ async function handleConfess(){
     const data=await r.json();
     const ai=data.result;
 
-    useTrialCount();
     renderConfessResult(ai);
     document.getElementById('proCard').style.display='block';
 
