@@ -1189,19 +1189,25 @@ async function handleAnalyze(){
   const res=document.getElementById('results');
   showLoading(res);
 
-  // AI 호출 시도
-  const aiResult=await callAI(text, mode==='compare'?'ALL':sel, mode);
+  if(mode==='compare'){
+    // 비교 모드: AI로 16개 한번에 번역 시도
+    res.innerHTML='';
+    const aiResult=await callAI(text,'ALL','compare');
+    if(aiResult&&!aiResult.raw&&typeof aiResult==='object'&&aiResult.INTJ) renderCompareAI(text,aiResult);
+    else renderCompare(text);
+    return;
+  }
+
+  // 해석/번역 모드: AI 호출
+  const aiResult=await callAI(text, sel, mode);
 
   res.innerHTML='';
   if(mode==='decode'){
     if(aiResult&&aiResult.meaning) renderDecodeAI(text,sel,aiResult);
     else renderDecode(text,sel);
-  } else if(mode==='translate'){
+  } else {
     if(aiResult&&aiResult.translated) renderTranslateAI(text,sel,aiResult.translated);
     else renderTranslate(text,sel);
-  } else {
-    if(aiResult&&!aiResult.raw) renderCompareAI(text,aiResult);
-    else renderCompare(text);
   }
 }
 
@@ -1320,27 +1326,39 @@ function renderDecode(text,type){
   `;
 }
 
-// Dynamic translation: wrap original text with MBTI personality
+// Dynamic translation: transform text into MBTI speaking style
 function dynamicTranslate(text,type){
+  // 원문에서 핵심 내용 추출 (이모티콘/부호 제거)
+  const core=text.replace(/[ㅋㅎㅠㅜ~!?.…]{2,}/g,'').replace(/\s+/g,' ').trim();
+  const short=core.length>15?core.substring(0,15):core;
+
   const styles={
-    INTJ:t=>`${t.replace(/[~ㅋㅎㅠ!]+/g,'').replace(/\.\.\./g,'.').trim()}. 그게 결론이야.`,
-    INTP:t=>`근데 생각해보면, ${t} ...인데 이게 정확한 표현인지 좀 더 생각해봐야 할 것 같아. 정의가 좀 모호해.`,
-    ENTJ:t=>`핵심만 말할게. ${t.replace(/[~]+/g,'')} 다음 스텝은?`,
-    ENTP:t=>`오 ㅋㅋ ${t}?? 근데 이거 반대로 생각해보면 더 재밌는 포인트가 있어. 야 잠깐 이거 들어봐 ㅋㅋ`,
-    INFJ:t=>`...${t} 라고 말하고 싶었어. 네가 어떻게 받아들일지 많이 고민했는데, 솔직한 게 맞다고 생각했어.`,
-    INFP:t=>`음... 사실 이 말을 어떻게 꺼내야 할지 한참 고민했는데 ㅎㅎ ${t}... 이상하게 생각 안 했으면 좋겠다. 근데 이게 내 진심이야...`,
-    ENFJ:t=>`${t}! 이 얘기 꼭 하고 싶었어! 근데 너는 어때? 너도 같은 생각이야? 😊`,
-    ENFP:t=>`오!! ${t}?? 와 대박!! ㅋㅋ 아 진짜?! 나 지금 텐션 올라간다 ㅋㅋ 아 근데 점심 뭐 먹을 거야? ㅋㅋ`,
-    ISTJ:t=>`${t.replace(/[~!ㅋㅎㅠ]+/g,'').trim()}.`,
-    ISFJ:t=>`${t} ㅎㅎ 혹시 괜찮아? 무슨 일 있으면 말해줘~`,
-    ESTJ:t=>`요점만. ${t.replace(/[~]+/g,'')} 끝.`,
-    ESFJ:t=>`맞아맞아~ ${t} ㅎㅎ 다들 어떻게 생각해? 그나저나 밥은 먹었어?`,
-    ISTP:t=>{const s=t.replace(/[~!ㅋㅎㅠ.]{2,}/g,'').trim(); return s.length>10?s.substring(0,10)+'.':s+'.';},
-    ISFP:t=>`${t}... 뭐, 그냥 그래 ㅎㅎ`,
-    ESTP:t=>`ㅋㅋ ${t} 뭘 복잡하게 생각해~ 일단 가자`,
-    ESFP:t=>`ㅋㅋㅋ ${t}?! 와 대박 ㅋㅋ 인생은 즐기는 거야!! 🎉`,
+    INTJ:()=>{
+      const clean=core.replace(/[~!]+/g,'').trim();
+      return `${clean}. 그게 전부야.`;
+    },
+    INTP:()=>`음... "${short}"라고 하긴 했는데, 정확히 말하면 좀 다를 수도 있어. 맥락에 따라 해석이 달라지거든. 좀 더 생각해볼게.`,
+    ENTJ:()=>`결론부터 말하면, ${core}. 다음은?`,
+    ENTP:()=>`ㅋㅋ 근데 "${short}" 이거 반대로 생각해보면 웃긴 게 있거든? 아 잠깐 이거 먼저 들어봐 ㅋㅋ`,
+    INFJ:()=>`...이걸 어떻게 말해야 할지 고민했는데. ${core}... 라고 말하고 싶었어. 솔직한 게 맞다고 생각했어.`,
+    INFP:()=>`음... 사실 이 말 꺼내기 전에 한참 고민했거든 ㅎㅎ ${core}... 이상하게 생각 안 했으면 좋겠다 ㅎㅎ 근데 이게 내 진심이야...`,
+    ENFJ:()=>`나 이 얘기 꼭 하고 싶었어! ${core}! 근데 너는 어떻게 생각해? 너 의견도 궁금해! 😊`,
+    ENFP:()=>`오!! 잠깐 이거 들어봐!! ${core}!! ㅋㅋㅋ 아 진짜 대박 아니야?! 나 지금 텐션 올라간다 ㅋㅋ 아 근데 배고파 ㅋㅋ`,
+    ISTJ:()=>`${core.replace(/[~!]+/g,'').trim()}.`,
+    ISFJ:()=>`${core} ㅎㅎ 근데 혹시 괜찮아? 무리하지 마~`,
+    ESTJ:()=>`${core}. 끝. 다음 안건.`,
+    ESFJ:()=>`맞아맞아~ ${core}!! ㅎㅎ 다들 어떻게 생각해? 아 그리고 밥은 먹었어?!`,
+    ISTP:()=>{
+      // ISTP는 핵심만 극단적으로 줄임
+      if(core.length<=3) return core+'.';
+      const words=core.split(' ');
+      return words.length<=2?core+'.':words.slice(0,2).join(' ')+'.';
+    },
+    ISFP:()=>`${core}... 뭐, 그냥 내 생각은 그래 ㅎㅎ`,
+    ESTP:()=>`ㅋㅋ ${short}? 뭘 복잡하게 생각해~ 일단 ㄱㄱ`,
+    ESFP:()=>`ㅋㅋㅋ ${core}?! 와 대박!! 인생은 즐기는 거야!! 🎉🔥`,
   };
-  return (styles[type]||styles.INFP)(text);
+  return (styles[type]||styles.INFP)();
 }
 
 function renderTranslate(text,type){
@@ -1374,13 +1392,13 @@ function renderCompare(text){
   list.className='compare-list';
   Object.keys(M).forEach((type,i)=>{
     setTimeout(()=>{
-      const d=M[type], t=TR[type];
-      const translated=t[tag]||dynamicTranslate(text,type);
+      const d=M[type], tr=TR[type];
+      const translated=tr[tag]||dynamicTranslate(text,type);
       const row=document.createElement('div');
       row.className='compare-row';
       row.innerHTML=`
         <div class="cr-left"><div class="emoji">${d.e}</div><div class="mbti">${type}</div></div>
-        <div class="cr-right"><div class="cr-text">${translated}</div><div class="cr-sub">${d.n} · ${d.s.split('.')[0]}</div></div>
+        <div class="cr-right"><div class="cr-text">${esc(translated)}</div><div class="cr-sub">${d.n} · ${d.s.split('.')[0]}</div></div>
       `;
       list.appendChild(row);
     },i*60);
